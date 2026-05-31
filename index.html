@@ -208,9 +208,9 @@ html,body{height:100%;overflow:hidden;font-family:Tahoma,'Segoe UI',sans-serif;b
         <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
       </div>
       <div class="mnav">
-        <button onclick="cm(-1)">&#8250;</button>
+        <button onclick="cm(1)">&#8250;</button>
         <span id="lbl-home"></span>
-        <button onclick="cm(1)">&#8249;</button>
+        <button onclick="cm(-1)">&#8249;</button>
       </div>
     </div>
     <div id="bal-card" class="bal-card"></div>
@@ -237,9 +237,9 @@ html,body{height:100%;overflow:hidden;font-family:Tahoma,'Segoe UI',sans-serif;b
     <div class="hdr">
       <div class="hdr-title">تراکنش‌ها</div>
       <div class="mnav">
-        <button onclick="cm(-1)">&#8250;</button>
+        <button onclick="cm(1)">&#8250;</button>
         <span id="lbl-tx"></span>
-        <button onclick="cm(1)">&#8249;</button>
+        <button onclick="cm(-1)">&#8249;</button>
       </div>
     </div>
     <div class="ftabs">
@@ -264,9 +264,9 @@ html,body{height:100%;overflow:hidden;font-family:Tahoma,'Segoe UI',sans-serif;b
     <div class="hdr">
       <div class="hdr-title">تقویم</div>
       <div class="mnav">
-        <button onclick="cm(-1)">&#8250;</button>
+        <button onclick="cm(1)">&#8250;</button>
         <span id="lbl-cal"></span>
-        <button onclick="cm(1)">&#8249;</button>
+        <button onclick="cm(-1)">&#8249;</button>
       </div>
     </div>
     <div class="cal-wrap">
@@ -406,7 +406,7 @@ function renderHome(){
   const txs=mTx(jy,jm);
   const inc=txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const exp=txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  const instM=D.inst.filter(i=>i.paid<i.total).reduce((s,i)=>s+i.monthly,0);
+  const instM=D.inst.filter(i=>instInMonth(i,jy,jm)).reduce((s,i)=>s+i.monthly,0);
   const bal=inc-exp;
   document.getElementById('bal-card').innerHTML=`
     <div class="bal-lbl">مانده ${JM[jm-1]}</div>
@@ -503,6 +503,14 @@ function renderTx(){
 
 function delTx(id){
   D.tx=D.tx.filter(t=>t.id!==id);save();renderAll();
+}
+
+function instInMonth(inst,jy,jm){
+  const[sy,sm]=inst.startMonth.split('/').map(Number);
+  const start=sy*12+sm;
+  const view=jy*12+jm;
+  const end=start+inst.total-1;
+  return view>=start&&view<=end;
 }
 
 // ===== INSTALLMENTS =====
