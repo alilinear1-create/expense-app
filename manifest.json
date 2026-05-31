@@ -1,0 +1,15 @@
+{
+    "theme_color":  "#5E5CE6",
+    "name":  "دخل و خرج",
+    "display":  "standalone",
+    "short_name":  "دخل و خرج",
+    "background_color":  "#5E5CE6",
+    "start_url":  ".",
+    "icons":  [
+                  {
+                      "type":  "image/png",
+                      "sizes":  "192x192",
+                      "src":  "icon.png"
+                  }
+              ]
+}
