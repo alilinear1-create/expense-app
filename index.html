@@ -341,7 +341,7 @@ let D={
 function save(){localStorage.setItem('fi_tx',JSON.stringify(D.tx));localStorage.setItem('fi_inst',JSON.stringify(D.inst));}
 
 // ===== STATE =====
-let VM=[],curF='all',selDay=null;
+let VM=[],curF='all',_selDay=null;
 let barChart=null,donutChart=null;
 
 function init(){
@@ -542,18 +542,18 @@ function renderCal(){
     const isToday=jy===now[0]&&jm===now[1]&&d===now[2];
     const dow=(fdow+d-1)%7; // 6=Fri
     const types=[...new Set(txMap[d]||[])];
-    h+=`<div class="cal-day${isToday?' today':''}${dow===6?' fri':''}" onclick="selDay(${d})">
+    h+=`<div class="cal-day${isToday?' today':''}${dow===6?' fri':''}" onclick="pickDay(${d})">
       <div class="dn">${p(d)}</div>
       <div class="dots">${types.map(t=>`<div class="dot ${t}"></div>`).join('')}</div>
     </div>`;
   }
   h+=`</div>`;
   document.getElementById('cal-grid').innerHTML=h;
-  if(selDay)selDay(selDay);
+  if(_selDay)pickDay(_selDay);
 }
 
-function selDay(d){
-  selDay=d;
+function pickDay(d){
+  _selDay=d;
   const[jy,jm]=VM;
   const dateStr=ds(jy,jm,d);
   const txs=D.tx.filter(t=>t.date===dateStr);
