@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="دخل و خرج">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
 <title>دخل و خرج</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -585,7 +587,7 @@ function openModal(type){
     const cOpts=cats.map(c=>`<option value="${c}">${c}</option>`).join('');
     const title=type==='income'?'📈 ثبت دریافتی':'📉 ثبت هزینه';
     h=`<div class="bs-title">${title}</div>
-      <div class="fg"><label class="fl">مبلغ (تومان)</label><input class="fi" type="number" id="fa" placeholder="مبلغ را وارد کنید" inputmode="numeric" autofocus></div>
+      <div class="fg"><label class="fl">مبلغ (تومان)</label><input class="fi" type="text" id="fa" placeholder="مثلاً ۵،۰۰۰،۰۰۰" inputmode="numeric" autofocus oninput="fmtInput(this)"></div>
       <div class="fg"><label class="fl">دسته‌بندی</label><select class="fs" id="fc">${cOpts}</select></div>
       <div class="fg"><label class="fl">توضیح (اختیاری)</label><input class="fi" type="text" id="fd" placeholder="توضیح"></div>
       <div class="fg"><label class="fl">تاریخ</label>
@@ -598,7 +600,7 @@ function openModal(type){
   }else{
     h=`<div class="bs-title">🔁 ثبت قسط جدید</div>
       <div class="fg"><label class="fl">نام قسط</label><input class="fi" type="text" id="fn" placeholder="مثلاً وام خودرو" autofocus></div>
-      <div class="fg"><label class="fl">مبلغ ماهانه (تومان)</label><input class="fi" type="number" id="fmon" placeholder="مبلغ هر قسط" inputmode="numeric"></div>
+      <div class="fg"><label class="fl">مبلغ ماهانه (تومان)</label><input class="fi" type="text" id="fmon" placeholder="مثلاً ۲،۰۰۰،۰۰۰" inputmode="numeric" oninput="fmtInput(this)"></div>
       <div class="frow">
         <div class="fg"><label class="fl">تعداد کل</label><input class="fi" type="number" id="ftot" placeholder="مثلاً ۲۴" inputmode="numeric"></div>
         <div class="fg"><label class="fl">پرداخت‌شده</label><input class="fi" type="number" id="fpd" placeholder="۰" value="0" inputmode="numeric"></div>
@@ -616,7 +618,7 @@ function openModal(type){
 }
 
 function subTx(type,jy){
-  const a=+document.getElementById('fa').value;
+  const a=getRaw('fa');
   if(!a||a<=0){alert('مبلغ را وارد کنید');return;}
   D.tx.push({id:String(Date.now()+Math.random()),type,amount:a,
     cat:document.getElementById('fc').value,
@@ -627,7 +629,7 @@ function subTx(type,jy){
 
 function subInst(){
   const name=document.getElementById('fn').value.trim();
-  const monthly=+document.getElementById('fmon').value;
+  const monthly=getRaw('fmon');
   const total=+document.getElementById('ftot').value;
   const paid=+document.getElementById('fpd').value||0;
   const m=document.getElementById('fim').value;
@@ -638,6 +640,18 @@ function subInst(){
 }
 
 function closeModal(){document.getElementById('ov').classList.remove('open');}
+
+function fmtInput(el){
+  const raw=el.value.replace(/[^0-9]/g,'');
+  if(!raw){el.value='';return;}
+  el.value=Number(raw).toLocaleString('en-US').replace(/,/g,'،');
+  el.dataset.raw=raw;
+}
+
+function getRaw(id){
+  const el=document.getElementById(id);
+  return +(el.dataset.raw||el.value.replace(/[^0-9]/g,''));
+}
 
 init();
 </script>
