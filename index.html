@@ -28,6 +28,23 @@
   --r: 16px;
   --sh: 0 2px 12px rgba(0,0,0,0.07);
 }
+[data-theme="dark"] {
+  --primary-light: #2A2A4A;
+  --income-light: #0D2E1A;
+  --expense-light: #2E0D0A;
+  --install-light: #2E1E00;
+  --bg: #1C1C1E;
+  --card: #2C2C2E;
+  --text: #F2F2F7;
+  --text2: #8E8E93;
+  --border: #38383A;
+  --sh: 0 2px 12px rgba(0,0,0,0.35);
+}
+/* theme transition */
+body,[data-theme="dark"] *{transition:background-color .25s,color .2s,border-color .2s;}
+/* theme toggle btn */
+.theme-btn{background:none;border:none;font-size:20px;cursor:pointer;padding:4px 6px;line-height:1;border-radius:8px;}
+.theme-btn:active{opacity:.7}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:Tahoma,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
 #app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
@@ -186,7 +203,10 @@ html,body{height:100%;overflow:hidden;font-family:Tahoma,'Segoe UI',sans-serif;b
   <!-- DASHBOARD -->
   <div class="scr on" id="s-home">
     <div class="hdr">
-      <div class="hdr-title">خانه</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="hdr-title">خانه</div>
+        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+      </div>
       <div class="mnav">
         <button onclick="cm(-1)">&#8250;</button>
         <span id="lbl-home"></span>
@@ -641,6 +661,23 @@ function subInst(){
 
 function closeModal(){document.getElementById('ov').classList.remove('open');}
 
+// ===== THEME =====
+function toggleTheme(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const next=isDark?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  document.getElementById('theme-btn').textContent=next==='dark'?'☀️':'🌙';
+  localStorage.setItem('fi_theme',next);
+  // redraw charts with new colors
+  renderHome();
+}
+function initTheme(){
+  const saved=localStorage.getItem('fi_theme')||'light';
+  document.documentElement.setAttribute('data-theme',saved);
+  const btn=document.getElementById('theme-btn');
+  if(btn)btn.textContent=saved==='dark'?'☀️':'🌙';
+}
+
 function fmtInput(el){
   const raw=el.value.replace(/[^0-9]/g,'');
   if(!raw){el.value='';return;}
@@ -653,6 +690,7 @@ function getRaw(id){
   return +(el.dataset.raw||el.value.replace(/[^0-9]/g,''));
 }
 
+initTheme();
 init();
 </script>
 </body>
